@@ -16,5 +16,9 @@ def handle_name(username):
 def handle_message(msg):
     emit('message', msg, broadcast=True)
 
+@socketio.on('blogPost')
+def handle_blog_post(post):
+    emit('blogPost', post, broadcast=True)
+
 if __name__ == '__main__':
     socketio.run(app, debug=True)
