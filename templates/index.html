@@ -2,6 +2,7 @@
     <html>
     <head>
         <title>Real-Time Blog</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     </head>
     <body>
@@ -10,7 +11,10 @@
         <button onClick="sendName()">Send Name</button>
         <input id="msg" autocomplete="off" placeholder="Type a message..."/>
         <button onclick="sendMessage()">Send Message</button>
+
         <ul id="messages"></ul>
+        <ul id="blogPosts"></ul>
+
         <script>
             var socket = io();
 
@@ -18,6 +22,12 @@
                 var item = document.createElement('li');
                 item.textContent = msg;
                 document.getElementById('messages').appendChild(item);
+            });
+
+            socket.on('blogPost', function(post) {
+                var item = document.createElement('li');
+                item.textContent = post.title + ': ' + post.content;
+                document.getElementById('blogPosts').appendChild(item);
             });
 
             function sendMessage() {
@@ -28,9 +38,26 @@
                 input.value = '';
             }
 
+            function sendBlogPost() {
+                var blogName = document.getElementById('blogName').value;
+                var blogContent = document.getElementById('blogContent').value;
+                if (!blogName && !blogContent) {
+                    console.log("blog name and content are undefined");
+                } else if (!blogName) {
+                    console.log("blog name is undefined");
+                } else if (!blogContent) {
+                    console.log("blog content is undefined");
+                } else {
+                    socket.emit('blogPost', { title: blogName, content: blogContent});
+                }
+            }
+
         
         </script>
         <h2 style="margin-top: 5px;text-align: right;">New Blog Posts!</h2>
+        <input id="blogName" placeholder="Enter blog name"/>
+        <input id="blogContent" placeholder="Enter blog content"/>
+        <button onclick="sendBlogPost()">Create Blog Post</button>
     </body>
 
     </html>
